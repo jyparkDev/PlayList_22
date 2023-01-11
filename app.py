@@ -10,13 +10,6 @@ db = client.playlist
 
 app = Flask(__name__)
 
-import requests
-from bs4 import BeautifulSoup
-
-from pymongo import MongoClient
-client = MongoClient('mongodb+srv://test:sparta@cluster0.8nebtyu.mongodb.net/Cluster0?retryWrites=true&w=majority')
-db = client.dbsparta
-
 @app.route('/', methods=["GET"])
 
 def home():
