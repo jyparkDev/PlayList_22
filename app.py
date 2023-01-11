@@ -43,17 +43,13 @@ def user_save():
     return render_template('index.html');
 
 
-@app.route("/", methods=["POST"])
+@app.route("/", methods=["POST"]) 
 def insertForm():
     id_receive = request.form['id_give']
     pw_receive = request.form['pw_give']
     db_info = db.users.find_one({'userId': id_receive}, {'_id': False})
-    print(db_info)
     pw_test = db_info['userPwd']
-    print(pw_test)
-
     input_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
-
 
     if id_receive == db_info['userId']:
         if pw_test == input_hash:
@@ -66,13 +62,18 @@ def insertForm():
         print("3")
         return jsonify({'msg': 'ID를 입력하세요!'})
 
+
+# get , post
+# get -> https(프로토콜)://www.naver.com(=192.168.312.123=ip):5000/come/hi?name=재용&id=1&pwd=2
+# request.args.get('name') = 재용 / id = request.args.get('id') = 1 / request.args.get('pwd') =
+
+
+
 @app.route("/come", methods=["GET"])
 def playlist():
-    return jsonify({'my_id': request.args.get('id')})
+    id = request.args.get('id')
+    return render_template('playlist.html', user_id=id);  {'user_id':id}
 
-@app.route("/all_user", methods=["GET"])
-def playlist():
-    return jsonify({'my_id': request.args.get('id')})
 
 # @app.route("/all_user", methods=["GET"])
 # def playlist_get():

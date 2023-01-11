@@ -62,12 +62,10 @@
                 type: "POST",
                 url: "/",
                 data: {id_give:id, pw_give:pwd},
-                success: function(response){
+                success: function(response){ response = {'msg' : 'ok', 'id' : 'test'}
                     let next = response['msg']
-
                     if (next == 'ok'){
-                        location.href="/pl?id=" + response['id']
-                        alert(id)
+                        location.href="/come?id="+response['id'];
                     }else
                         alert(next)
                 }
