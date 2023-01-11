@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import hashlib
-import os
 
-f = open(os.getcwd() + '\dbproperties', 'r', encoding="utf-8");
+f = open('dbproperties', 'r', encoding="utf-8");
 dbdata = f.readline();
 
 client = MongoClient(dbdata)
