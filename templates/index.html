@@ -5,10 +5,23 @@
     <title>Title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+        function hey(){
+            let id = $('#id').val();
+            let pwd = $('#pwd').val();
+            $.ajax({ //
+                type: 'POST',
+                url : '/regist?id='+id+'&pwd='+pwd,
+                data : {id_give:id,pwd_give:pwd} ,
+                success: function (res){
 
+                }
+            })
+        }
     </script>
 </head>
 <body>
-<h1>플레이리스트 프로젝트</h1>
+<h1>환영합니다.!!!</h1>
+<button onclick="hey()">로그인</button>
+<button><a href="/regist">회원가입</a></button>
 </body>
 </html>
