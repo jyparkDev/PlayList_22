@@ -45,27 +45,39 @@ def user_save():
 
 @app.route("/", methods=["POST"])
 def insertForm():
-    id_receive = 1
+    id_receive = request.form['id_give']
     pw_receive = request.form['pw_give']
-    userInfo = db.users.find_one({'userId': id_receive}, {'_id': False})
-    find_id = userInfo['userId'];
-    find_pwd = userInfo['userPwd'];
+    db_info = db.users.find_one({'userId': id_receive}, {'_id': False})
+    print(db_info)
+    pw_test = db_info['userPwd']
+    print(pw_test)
+
     input_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
-    receive_hash = 1
-    # if id_receive == find_id:
-    #     if receive_hash == input_hash:
-    if id_receive == 1:
-        if receive_hash == 1:
-            return render_template("playlist.html", id_sender='id')
+
+
+    if id_receive == db_info['userId']:
+        if pw_test == input_hash:
+            print("1")
+            return jsonify({'msg':"ok", 'id' : id_receive })
         else:
+            print("2")
             return jsonify({'msg': '패스워드를 입력하세요!'})
     else:
+        print("3")
         return jsonify({'msg': 'ID를 입력하세요!'})
 
+@app.route("/come", methods=["GET"])
+def playlist():
+    return jsonify({'my_id': request.args.get('id')})
+
 @app.route("/all_user", methods=["GET"])
-def playlist_get():
-    all_playlist = list(db.test.find({}, {'_id': False}))
-    return jsonify({'playlists':all_playlist})
+def playlist():
+    return jsonify({'my_id': request.args.get('id')})
+
+# @app.route("/all_user", methods=["GET"])
+# def playlist_get():
+#     all_playlist = list(db.test.find({}, {'_id': False}))
+#     return jsonify({'playlists':all_playlist})
 
 @app.route("/user", methods=["GET"])
 def user_id():

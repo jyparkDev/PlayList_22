@@ -65,8 +65,8 @@
                 success: function(response){
                     let next = response['msg']
 
-                    if (next == '성공'){
-                        location.href="/regist?id=" + id
+                    if (next == 'ok'){
+                        location.href="/pl?id=" + response['id']
                         alert(id)
                     }else
                         alert(next)
