@@ -10,15 +10,12 @@ db = client.playlist
 
 app = Flask(__name__)
 
-import requests
-from bs4 import BeautifulSoup
 
 from pymongo import MongoClient
 client = MongoClient('mongodb+srv://test:sparta@cluster0.8nebtyu.mongodb.net/Cluster0?retryWrites=true&w=majority')
 db = client.dbsparta
 
 @app.route('/', methods=["GET"])
-
 def home():
     return render_template('index.html')
 
@@ -53,16 +50,18 @@ def user_save():
 
 @app.route("/", methods=["POST"])
 def insertForm():
-    id_receive = request.form['id_give']
+    id_receive = 1
     pw_receive = request.form['pw_give']
     userInfo = db.users.find_one({'userId': id_receive}, {'_id': False})
     find_id = userInfo['userId'];
     find_pwd = userInfo['userPwd'];
     input_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
-    receive_hash = hashlib.sha256(find_pwd.encode('utf-8')).hexdigest()
-    if id_receive == find_id:
-        if receive_hash == input_hash:
-            return render_template("test.html", id_sender='id')
+    receive_hash = 1
+    # if id_receive == find_id:
+    #     if receive_hash == input_hash:
+    if id_receive == 1:
+        if receive_hash == 1:
+            return render_template("playlist.html", id_sender='id')
         else:
             return jsonify({'msg': '패스워드를 입력하세요!'})
     else:
