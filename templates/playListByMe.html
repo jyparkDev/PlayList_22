@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <title>플레이리스트</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+    <style>
+    * {
+        font-family: 'Gowun Dodum', sans-serif;
+    }
+
+    .mytitle {
+        width: 100%;
+        height: 180px;
+
+        background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://img.freepik.com/free-vector/seamless-floral-with-cherry-blossoms-in-full-bloom-on-a-pink_8130-712.jpg?w=1380&t=st=1673456585~exp=1673457185~hmac=fcb5841c1455fd0f1d5668fdeb8f98ffb91ab90cd44d76eb1dfe5552b55aef88');
+        background-position: center;
+        background-size: cover;
+
+        color: white;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+
+    .mytitle > button {
+        width: 200px;
+        height: 50px;
+
+        background-color: transparent;
+        color: white;
+
+        border-radius: 50px;
+        border: 1px solid white;
+
+        margin-top: 10px;
+    }
+
+    .mytitle > button:hover {
+        border: 2px solid white;
+    }
+
+    .mycomment {
+        color: gray;
+    }
+
+    .mycards {
+        margin: 20px auto 0px auto;
+        width: 95%;
+        max-width: 1200px;
+    }
+
+    .mypost {
+        width: 95%;
+        max-width: 500px;
+        margin: 20px auto 0px auto;
+        padding: 20px;
+        box-shadow: 0px 0px 3px 0px gray;
+
+        display: none;
+    }
+
+    .mybtns {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        margin-top: 20px;
+    }
+    .mybtns > button {
+        margin-right: 10px;
+    }
+
+    </style>
+    <script>
+    $(document).ready(function(){
+        music();
+        comment();
+    });
+
+    function music() {
+        let userid = $('#user').val()
+
+        $.ajax({
+            type: 'GET',
+            url: '/music',
+            data: {userid_give : userid},
+            success: function (response) {
+                let rows = response['musics']
+
+                for(let i =0; i <rows.length; i++) {
+                    let title = rows[i]['title']
+                    let img = rows[i]['img']
+                    let singer = rows[i]['singer']
+                    let introduce = rows[i]['introduce']
+                    let url = rows[i]['url']
+
+                    let temp_html = `<div class="card" style="width: 18rem;">
+                                        <img src="${img}" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <ul class="list-group list-group-flush">
+                                                <li id='a' class="list-group-item"><strong>제목</strong> : ${title}</li>
+                                                <li id='b' class="list-group-item"><strong>가수</strong> : ${singer}</li>
+                                                <li id='c' class="list-group-item"><strong>한줄평</strong> : ${introduce}</li>
+                                            </ul>
+                                            <div class="col text-center mt-1">
+                                                <a href= ${url} class="btn btn-dark">노래 듣기</a>
+                                                <button type="button" onclick="music_delete('${title}','${singer}', '${introduce}');" class="btn btn-danger">삭제</button>
+                                            </div>
+
+                                        </div>
+                                    </div>`
+                    $('#cards-box').append(temp_html)
+                }
+            }
+        })
+    }
+    function music_delete(title_temp, singer_temp, introduce_temp) {
+        let userid = $('#user').val()
+        let title = title_temp
+        let singer = singer_temp
+        let introduce = introduce_temp
+
+        $.ajax({
+            type: 'post',
+            url : '/delete',
+            data: {title_give : title, singer_give : singer, introduce_give : introduce, userid_give : userid},
+            success: function (response) {
+                alert(response['msg'])
+                window.location.reload()
+            }
+        });
+    }
+
+    function comment() {
+        let userid = $('#user').val()
+        $.ajax({
+            type: 'GET',
+            url: '/comment',
+            data: {userid_give : userid},
+            success: function (response) {
+                let rows = response['comments']
+
+                for(let i =0; i <rows.length; i++) {
+                    let author = rows[i]['author']
+                    let comment = rows[i]['comment']
+
+                    let temp_html = `<div class="card text-bg-light mb-3" style="max-width: 15rem;">
+                                        <div class="card-header">${author}</div>
+                                        <div class="card-body">
+                                            <p class="card-text">${comment}</p>
+                                        </div>
+                                     </div>`
+                    $('#cards-box2').append(temp_html)
+                }
+            }
+        })
+    }
+
+    function posting() {
+        let url = $('#url').val()
+        let introduce = $('#introduce').val()
+        let userid = $('#user').val()
+        $.ajax({
+            type: 'POST',
+            url: '/music',
+            data: {url_give: url, introduce_give : introduce, userid_give : userid},
+            success: function (response) {
+                alert(response['msg'])
+                window.location.reload()
+            }
+        });
+    }
+
+    function open_box(){
+        $('#post-box').show()
+    }
+    function close_box(){
+        $('#post-box').hide()
+    }
+    function back() {
+        $.ajax({
+            type: 'GET',
+            url: '/',
+            data: {},
+            success: function (response) {
+
+            }
+        });
+    }
+
+    </script>
+</head>
+
+<body>
+
+    <div class="mytitle">
+        <h1>내 플레이리스트</h1>
+        <button onclick="open_box()">노래 등록하기</button>
+        <button onclick="location.href='/';">뒤로가기</button>
+    </div>
+
+    <div class="mypost" id="post-box">
+        <div class="form-floating mb-3">
+            <input id="url" type="email" class="form-control" placeholder="name@example.com">
+            <label>URL(멜론에서 <strong>노래 제목</strong>을 검색하세요.(앨범X)</label>
+        </div>
+        <div class="form-floating">
+            <textarea id="introduce" class="form-control" placeholder="Leave a comment here"></textarea>
+            <label for="floatingTextarea2">한줄평</label>
+        </div>
+        <div class="mybtns">
+            <button onclick="posting()" type="button" class="btn btn-dark">등록하기</button>
+            <button onclick="close_box()" type="button" class="btn btn-outline-dark">닫기</button>
+        </div>
+        <input type="hidden" id="user" value="{{userid}}" />
+    </div>
+    <div class="row row-cols-1 row-cols-md-4 g-4 mt-3" id="cards-box">
+    </div>
+    <div class="row row-cols-1 row-cols-md-4 g-4 mt-3" id="cards-box2">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+</body>
+
