@@ -70,14 +70,15 @@
 
     <script>
 
+        {#const id = $('#my_id').val()#}
 
-        function others_playlist() {
+{#        function others_playlist() {
 
             $('#cards-box').empty()
 
             $.ajax({
                 type: "GET",
-                url: "/all_user",
+                url: "/all_playlist",
                 data: {},
                 success: function (response) {
 
@@ -85,7 +86,7 @@
 
                     for(let i = 0; i < rows.length; i++ ) {
 
-                        let login_id = rows[i]['loginid']
+                        let login_id = rows[i]['userId']
                         let total_music = rows[i]['music']
 
                         let temp_html = `<div class="card-group">
@@ -93,10 +94,10 @@
                                                 <img src="https://freight.cargo.site/t/original/i/52c62de20abdcf386ec178d6404d6814011048a88a17785392366db70d4a8916/playlist_pic_01.png" class="card-img-top" alt="...">
                                                 <div class="card-body">
                                                   <h3 class="card-title">${login_id}님의 플레이리스트</h3>
-                                                  <h3 class="card-title">${total_music}곡</h3>
+                                                  <h3 class="card-title">30곡</h3>
                                                 </div>
                                                 <div class="card-footer">
-                                                  <small class="text-muted"><button onclick="detail()" type="button" class="btn btn-outline-warning">상세보기</button></small>
+                                                  <small class="text-muted"><button onclick="detail(${login_id})" type="button" class="btn btn-outline-warning">상세보기</button></small>
                                                 </div>
                                               </div>
                                         </div>`
@@ -105,63 +106,51 @@
                     }
                 }
              })
-        }
+        }#}
 
 
         function my_playlist() {
+
+            let id = $('#my_id').val()
 
             $('#cards-box').empty()
 
             $.ajax({
                 type: "GET",
-                url: "/all_user",
-                data: {},
+                url: "/my_playlist",
+                data: {id_give : id},
                 success: function (response) {
-                    let rows = response['playlists']
+                    let user_id = response['id']
+                    {#let total_music = response['musics']#}
 
-                    for (let i = 0; i < rows.length; i++) {
-                        let login_id = rows[i]['loginid']
-                        let total_music = rows[i]['music']
+                    let temp_html = `<div class="card-group">
+                                         <div class="card">
+                                             <img src="https://freight.cargo.site/t/original/i/52c62de20abdcf386ec178d6404d6814011048a88a17785392366db70d4a8916/playlist_pic_01.png" class="card-img-top" alt="...">
+                                                 <div class="card-body">
+                                                     <h3 class="card-title">${user_id}님의 플레이리스트</h3>
+                                                     <h3 class="card-title">30곡</h3>
+                                                 </div>
+                                                 <div class="card-footer">
+                                                     <small class="text-muted"><button onclick='my_detail("${user_id}")' type="button" class="btn btn-outline-warning">상세보기</button></small>
+                                                 </div>
+                                         </div>
+                                     </div>`
 
-                        if (login_id == "abc") {
+                    $('#cards-box').append(temp_html)
 
-                            let temp_html = `<div class="card-group">
-                                                  <div class="card">
-                                                    <img src="https://freight.cargo.site/t/original/i/52c62de20abdcf386ec178d6404d6814011048a88a17785392366db70d4a8916/playlist_pic_01.png" class="card-img-top" alt="...">
-                                                    <div class="card-body">
-                                                      <h3 class="card-title">${login_id}님의 플레이리스트</h3>
-                                                      <h3 class="card-title">${total_music}곡</h3>
-                                                    </div>
-                                                    <div class="card-footer">
-                                                      <small class="text-muted"><button onclick="detail()" type="button" class="btn btn-outline-warning">상세보기</button></small>
-                                                    </div>
-                                                  </div>
-                                            </div>`
 
-                            $('#cards-box').append(temp_html)
-
-                        }
-                    }
                 }
             })
         }
 
 
 
+        function my_detail(my_id) {
 
-        function detail() {
+            let playlist_id = my_id
 
-            let user_id = my_id
-            {#let other_id = "abcd"#}
+            location.href = "/playlist/me?userid_receive=" + playlist_id
 
-             $.ajax({
-                 type: "GET",
-                 url: "/user",
-                 data: {"id_give" : user_id},
-                 success: function (response) {
-                    alert(my_id)
-                 }
-             })
         }
 
     </script>
@@ -180,6 +169,7 @@
 
 <div class="get_id">
     <input type="hidden" id="my_id" value="{{user_id}}">
+
 </div>
 
 

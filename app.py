@@ -53,13 +53,10 @@ def insertForm():
 
     if id_receive == db_info['userId']:
         if pw_test == input_hash:
-            print("1")
             return jsonify({'msg':"ok", 'id' : id_receive })
         else:
-            print("2")
             return jsonify({'msg': '패스워드를 입력하세요!'})
     else:
-        print("3")
         return jsonify({'msg': 'ID를 입력하세요!'})
 
 
@@ -72,19 +69,20 @@ def insertForm():
 @app.route("/come", methods=["GET"])
 def playlist():
     id = request.args.get('id')
-    return render_template('playlist.html', user_id=id);  {'user_id':id}
+    return render_template('playlist.html', user_id=id);
 
 
-# @app.route("/all_user", methods=["GET"])
-# def playlist_get():
-#     all_playlist = list(db.test.find({}, {'_id': False}))
-#     return jsonify({'playlists':all_playlist})
+@app.route("/all_playlist", methods=["GET"])
+def other_list():
+    all_playlist = list(db.users.find({}, {'_id': False}))
+    return jsonify({'playlists' : all_playlist})
 
-@app.route("/user", methods=["GET"])
-def user_id():
-    id_receive = 'id_give'
-    # other_receive = 'id_give'
-    return render_template(my_id=id_receive)
+
+@app.route("/my_playlist", methods=["GET"])
+def my_list():
+    userid_receive = request.args.get('id_give')
+    return jsonify({'id':userid_receive})
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
