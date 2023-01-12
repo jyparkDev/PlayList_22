@@ -179,6 +179,14 @@
         $('#post-box').hide()
     }
 
+    function cancel() {
+
+        let userid = $('#user').val()
+
+        location.href = "/come?id=" + userid
+
+    }
+
     </script>
 </head>
 
@@ -186,7 +194,7 @@
     <div class="mytitle">
         <h1>{{username}}의 플레이리스트</h1>
         <button onclick="open_box()">댓글 달기</button>
-        <button onclick="location.href='/';">뒤로가기</button>
+        <button onclick="cancel()">뒤로가기</button>
     </div>
     <div class="mypost" id="post-box">
         <div class="form-floating">

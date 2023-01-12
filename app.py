@@ -44,6 +44,40 @@ def user_save():
     }
     db.users.insert_one(doc);
     checkid = db.users.find_one({'userId': id}, {'_id': False});
+
+    ####################### 회원가입하면 playList db 생성 및 초기화  #####################################
+    #  넘어온 loginid값의 playlist가 DB에 없으면 생성
+    if db.playlist.find_one({'userid': id}) is None:
+        db.playlist.insert_one({'userid': id})
+
+    # playlist에 테스트 추가
+    db.playlist.update_one({"userid": id},
+                           {'$addToSet': {
+                               'music': {'title': "테스트", 'img': "테스트", 'singer': "테스트", 'introduce': "테스트",
+                                         'url': '테스트'}}})
+    # playlist에 댓글 달기
+    db.playlist.update_one({"userid": id},
+                           {'$addToSet': {'comments': {'author': "test", 'comment': "test"}}})
+
+    db.playlist.update_one(
+        {"userid": id},
+        {'$pull': {
+            'music': {
+                'title': "테스트"
+            }
+        }},
+        # {'multi':'true'}
+    );
+    db.playlist.update_one(
+        {"userid": id},
+        {'$pull': {
+            'comments': {
+                'author': "test"
+            }
+        }},
+        # {'multi':'true'}
+    );
+
     return render_template('index.html');
 
 
@@ -98,6 +132,7 @@ def findPlayListByMe():
     userid_receive = request.args.get('userid_give')  #근호님한테 userid 받음
     # username을 로그인 db에서 찾아오자
     username = request.args.get('username_give')
+    print(userid_receive)
     return render_template('playListByMe.html', userid = userid_receive, username = username)
 
 # 타인 플레이리스트 조회
@@ -155,8 +190,10 @@ def movie_get():
     # 노래 개수
     # print(len(play_list['music']))
 
-    return jsonify({'musics': play_list['music']})
-
+    try:
+        return jsonify({'musics': play_list['music']})
+    except:
+        print("리스트가 없습니다")
 # 댓글 등록
 @app.route("/comment", methods=["POST"])
 def comment_post():
@@ -164,12 +201,12 @@ def comment_post():
     userid_receive = request.form['userid_give']
     login_receive = request.form['loginid_give']
 
-    # login한 사람 이름을 login db에서 받기
-    loginname = "철수"
+    user = db.users.find_one({'userId': login_receive})
+
 
     # playlist에 댓글 달기
     db.playlist.update_one({"userid": userid_receive},
-                    {'$addToSet': {'comments':  {'author' : loginname, 'comment' : comment_receive}}})
+                    {'$addToSet': {'comments':  {'author' : user['userName'], 'comment' : comment_receive}}})
     return jsonify({'msg': '댓글을 달았습니다!'})
 
 # 댓글 리스트 조회
@@ -178,8 +215,11 @@ def comment_get():
     userid_receive = request.args.get("userid_give")
 
     play_list = db.playlist.find_one({'userid': userid_receive},{'_id':0, 'userid':0, 'introduce':0})
-    return jsonify({'comments': play_list['comments']})
 
+    try:
+        return jsonify({'comments': play_list['comments']})
+    except:
+        print("리스타가 없습니다")
 # 뮤직 삭제
 @app.route("/delete", methods=["POST"])
 def music_delete():

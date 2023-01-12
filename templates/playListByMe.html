@@ -206,6 +206,13 @@
             }
         });
     }
+    function cancel() {
+
+            let userid = $('#user').val()
+
+            location.href = "/come?id=" + userid
+
+        }
 
     </script>
 </head>
@@ -215,7 +222,7 @@
     <div class="mytitle">
         <h1>내 플레이리스트</h1>
         <button onclick="open_box()">노래 등록하기</button>
-        <button onclick="location.href='/';">뒤로가기</button>
+        <button onclick="cancel()">뒤로가기</button>
     </div>
 
     <div class="mypost" id="post-box">
