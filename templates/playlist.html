@@ -70,43 +70,46 @@
 
     <script>
 
-        {#const id = $('#my_id').val()#}
+        function others_playlist() {
 
-{#        function others_playlist() {
+            let id = $('#my_id').val()
 
             $('#cards-box').empty()
 
             $.ajax({
                 type: "GET",
-                url: "/all_playlist",
-                data: {},
+                url: "/others_playlist",
+                data: {id_give: id},
                 success: function (response) {
 
-                    let rows = response['playlists']
+                    let names = response['other_name']
+                    let id = response['my_id']
+                    let other_id = response['others_id']
 
-                    for(let i = 0; i < rows.length; i++ ) {
+                    for (let i = 0; i < names.length; i++) {
 
-                        let login_id = rows[i]['userId']
-                        let total_music = rows[i]['music']
+                        let user_name = names[i]
+                        let user_id = other_id[i]
 
-                        let temp_html = `<div class="card-group">
-                                              <div class="card">
-                                                <img src="https://freight.cargo.site/t/original/i/52c62de20abdcf386ec178d6404d6814011048a88a17785392366db70d4a8916/playlist_pic_01.png" class="card-img-top" alt="...">
-                                                <div class="card-body">
-                                                  <h3 class="card-title">${login_id}님의 플레이리스트</h3>
-                                                  <h3 class="card-title">30곡</h3>
-                                                </div>
-                                                <div class="card-footer">
-                                                  <small class="text-muted"><button onclick="detail(${login_id})" type="button" class="btn btn-outline-warning">상세보기</button></small>
-                                                </div>
-                                              </div>
-                                        </div>`
+                        let temp_html =
+                            `<div class="card-group">
+                                <div class="card">
+                                    <img src="https://freight.cargo.site/t/original/i/52c62de20abdcf386ec178d6404d6814011048a88a17785392366db70d4a8916/playlist_pic_01.png" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <h3 class="card-title">${user_name}님의 플레이리스트</h3>
+                                        <h3 class="card-title">30곡</h3>
+                                    </div>
+                                    <div class="card-footer">
+                                        <small class="text-muted"><button onclick='others_detail("${id}" , "${user_name}" , "${user_id}")' type="button" class="btn btn-outline-warning">상세보기</button></small>
+                                    </div>
+                                </div>
+                            </div>`
 
                         $('#cards-box').append(temp_html)
                     }
                 }
-             })
-        }#}
+            })
+        }
 
 
         function my_playlist() {
@@ -118,20 +121,21 @@
             $.ajax({
                 type: "GET",
                 url: "/my_playlist",
-                data: {id_give : id},
+                data: {id_give: id},
                 success: function (response) {
                     let user_id = response['id']
-                    {#let total_music = response['musics']#}
+                    let user_name = response['user_name']
+                    let music = response['musics']
 
                     let temp_html = `<div class="card-group">
                                          <div class="card">
                                              <img src="https://freight.cargo.site/t/original/i/52c62de20abdcf386ec178d6404d6814011048a88a17785392366db70d4a8916/playlist_pic_01.png" class="card-img-top" alt="...">
                                                  <div class="card-body">
-                                                     <h3 class="card-title">${user_id}님의 플레이리스트</h3>
-                                                     <h3 class="card-title">30곡</h3>
+                                                     <h3 class="card-title">${user_name}님의 플레이리스트</h3>
+                                                     <h3 class="card-title">${music}</h3>
                                                  </div>
                                                  <div class="card-footer">
-                                                     <small class="text-muted"><button onclick='my_detail("${user_id}")' type="button" class="btn btn-outline-warning">상세보기</button></small>
+                                                     <small class="text-muted"><button onclick='my_detail("${user_id}","${user_name}")' type="button" class="btn btn-outline-warning">상세보기</button></small>
                                                  </div>
                                          </div>
                                      </div>`
@@ -144,6 +148,14 @@
         }
 
 
+        function others_detail(my_id, my_name, user_id) {
+
+            let playlist_id = my_id
+            let all_user_name = my_name
+            let userid = user_id
+            location.href = "/playlist/others?userid_give=" + userid + "&loginid_give=" + playlist_id + "&username_give=" + all_user_name
+
+        }
 
         function my_detail(my_id) {
 

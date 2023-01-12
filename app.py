@@ -76,35 +76,40 @@ def playlist():
     return render_template('playlist.html', user_id=id);
 
 
-@app.route("/all_playlist", methods=["GET"])
+@app.route("/others_playlist", methods=["GET"])
 def other_list():
+    userid_receive = request.args.get('id_give')
     all_playlist = list(db.users.find({}, {'_id': False}))
-    return jsonify({'playlists' : all_playlist})
+    name = [all_name['userName'] for all_name in all_playlist]
+    userid = [all_id['userId'] for all_id in all_playlist]
+    return jsonify({'my_id' : userid_receive , 'other_name' : name , 'others_id' : userid})
 
 
 @app.route("/my_playlist", methods=["GET"])
 def my_list():
     userid_receive = request.args.get('id_give')
-    return jsonify({'id':userid_receive})
+    users = db.users.find({'userId': userid_receive})
+    users_by_name = [user['userName'] for user in users]
+    return jsonify({'id' : userid_receive , 'user_name': users_by_name })
 
 # 내 플레이리스트 조회
 @app.route('/playlist/me', methods=["GET"])
 def findPlayListByMe():
     userid_receive = request.args.get('userid_give')  #근호님한테 userid 받음
     # username을 로그인 db에서 찾아오자
-    username = '철수'
+    username = request.args.get('username_give')
     return render_template('playListByMe.html', userid = userid_receive, username = username)
 
 # 타인 플레이리스트 조회
-@app.route('/playlist/others')
+@app.route('/playlist/others', methods=["GET"])
 def findPlayListByOthers():
     # username을 로그인 db에서 찾아오자
     # userid_receive = request.args.get("userid_give")   # 근호님한테 userid 받음
     # loginid_receive = request.args.get("loginid_give")    # 근호님한테 loginid 받음
-    userid_receive = 'test'
-    loginid_receive = 'test comment'
-    username = '이상훈'
-    return render_template('playListByothers.html', loginid = loginid_receive, userid = userid_receive, username = username)
+    userid_receive = request.args.get("userid_give")
+    loginid_receive = request.args.get("loginid_give")
+    username_receive = request.args.get("username_give")
+    return render_template('playListByothers.html', loginid = loginid_receive, userid = userid_receive, username = username_receive)
 
 
 # 음악 등록
